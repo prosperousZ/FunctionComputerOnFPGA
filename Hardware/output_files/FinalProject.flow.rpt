@@ -1,0 +1,143 @@
+Flow report for FinalProject
+Fri Dec 13 16:33:22 2019
+Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Flow Summary
+  3. Flow Settings
+  4. Flow Non-Default Global Settings
+  5. Flow Elapsed Time
+  6. Flow OS Summary
+  7. Flow Log
+  8. Flow Messages
+  9. Flow Suppressed Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2018  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details.
+
+
+
++-------------------------------------------------------------------------------+
+; Flow Summary                                                                  ;
++---------------------------------+---------------------------------------------+
+; Flow Status                     ; Successful - Fri Dec 13 16:33:22 2019       ;
+; Quartus Prime Version           ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
+; Revision Name                   ; FinalProject                                ;
+; Top-level Entity Name           ; FinalProject                                ;
+; Family                          ; Cyclone V                                   ;
+; Device                          ; 5CSEMA5F31C6                                ;
+; Timing Models                   ; Final                                       ;
+; Logic utilization (in ALMs)     ; N/A                                         ;
+; Total registers                 ; 488                                         ;
+; Total pins                      ; 32                                          ;
+; Total virtual pins              ; 0                                           ;
+; Total block memory bits         ; 1,219,072                                   ;
+; Total DSP Blocks                ; 0                                           ;
+; Total HSSI RX PCSs              ; 0                                           ;
+; Total HSSI PMA RX Deserializers ; 0                                           ;
+; Total HSSI TX PCSs              ; 0                                           ;
+; Total HSSI PMA TX Serializers   ; 0                                           ;
+; Total PLLs                      ; 0                                           ;
+; Total DLLs                      ; 0                                           ;
++---------------------------------+---------------------------------------------+
+
+
++-----------------------------------------+
+; Flow Settings                           ;
++-------------------+---------------------+
+; Option            ; Setting             ;
++-------------------+---------------------+
+; Start date & time ; 12/13/2019 16:20:30 ;
+; Main task         ; Compilation         ;
+; Revision Name     ; FinalProject        ;
++-------------------+---------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Flow Non-Default Global Settings                                                                                                                     ;
++--------------------------------------+----------------------------------------+--------------------------------------+-------------+-----------------+
+; Assignment Name                      ; Value                                  ; Default Value                        ; Entity Name ; Section Id      ;
++--------------------------------------+----------------------------------------+--------------------------------------+-------------+-----------------+
+; ALLOW_ANY_RAM_SIZE_FOR_RECOGNITION   ; On                                     ; Off                                  ; --          ; --              ;
+; ALLOW_ANY_ROM_SIZE_FOR_RECOGNITION   ; On                                     ; Off                                  ; --          ; --              ;
+; ALLOW_POWER_UP_DONT_CARE             ; Off                                    ; On                                   ; --          ; --              ;
+; ALLOW_REGISTER_RETIMING              ; Off                                    ; On                                   ; --          ; --              ;
+; ALM_REGISTER_PACKING_EFFORT          ; Low                                    ; Medium                               ; --          ; --              ;
+; COMPILER_SIGNATURE_ID                ; 145169990947.157627923039117           ; --                                   ; --          ; --              ;
+; EDA_DESIGN_INSTANCE_NAME             ; NA                                     ; --                                   ; --          ; tb_finalproject ;
+; EDA_NATIVELINK_SIMULATION_TEST_BENCH ; tb_finalproject                        ; --                                   ; --          ; eda_simulation  ;
+; EDA_OUTPUT_DATA_FORMAT               ; Verilog Hdl                            ; --                                   ; --          ; eda_simulation  ;
+; EDA_SIMULATION_TOOL                  ; ModelSim-Altera (Verilog)              ; <None>                               ; --          ; --              ;
+; EDA_TEST_BENCH_ENABLE_STATUS         ; TEST_BENCH_MODE                        ; --                                   ; --          ; eda_simulation  ;
+; EDA_TEST_BENCH_FILE                  ; tb_finalproject.v                      ; --                                   ; --          ; tb_finalproject ;
+; EDA_TEST_BENCH_MODULE_NAME           ; tb_finalproject                        ; --                                   ; --          ; tb_finalproject ;
+; EDA_TEST_BENCH_NAME                  ; tb_finalproject                        ; --                                   ; --          ; eda_simulation  ;
+; EDA_TIME_SCALE                       ; 1 ps                                   ; --                                   ; --          ; eda_simulation  ;
+; FITTER_EFFORT                        ; Fast Fit                               ; Auto Fit                             ; --          ; --              ;
+; MAX_CORE_JUNCTION_TEMP               ; 85                                     ; --                                   ; --          ; --              ;
+; MIN_CORE_JUNCTION_TEMP               ; 0                                      ; --                                   ; --          ; --              ;
+; MISC_FILE                            ; Processor/memory_bb.v                  ; --                                   ; --          ; --              ;
+; NUM_PARALLEL_PROCESSORS              ; 3                                      ; --                                   ; --          ; --              ;
+; PARTITION_COLOR                      ; -- (Not supported for targeted family) ; --                                   ; --          ; Top             ;
+; PARTITION_FITTER_PRESERVATION_LEVEL  ; -- (Not supported for targeted family) ; --                                   ; --          ; Top             ;
+; PARTITION_NETLIST_TYPE               ; -- (Not supported for targeted family) ; --                                   ; --          ; Top             ;
+; PHYSICAL_SYNTHESIS_EFFORT            ; Fast                                   ; Normal                               ; --          ; --              ;
+; PLACEMENT_EFFORT_MULTIPLIER          ; 0.1                                    ; 1.0                                  ; --          ; --              ;
+; POWER_BOARD_THERMAL_MODEL            ; None (CONSERVATIVE)                    ; --                                   ; --          ; --              ;
+; POWER_PRESET_COOLING_SOLUTION        ; 23 MM HEAT SINK WITH 200 LFPM AIRFLOW  ; --                                   ; --          ; --              ;
+; PROJECT_IP_REGENERATION_POLICY       ; ALWAYS_REGENERATE_IP                   ; SKIP_REGENERATING_IP_IF_HDL_MODIFIED ; --          ; --              ;
+; PROJECT_OUTPUT_DIRECTORY             ; output_files                           ; --                                   ; --          ; --              ;
+; SMART_RECOMPILE                      ; On                                     ; Off                                  ; --          ; --              ;
+; STRICT_RAM_RECOGNITION               ; On                                     ; Off                                  ; --          ; --              ;
+; SYNTHESIS_EFFORT                     ; Fast                                   ; Auto                                 ; --          ; --              ;
+; VERILOG_INPUT_VERSION                ; SystemVerilog_2005                     ; Verilog_2001                         ; --          ; --              ;
+; VERILOG_SHOW_LMF_MAPPING_MESSAGES    ; Off                                    ; --                                   ; --          ; --              ;
++--------------------------------------+----------------------------------------+--------------------------------------+-------------+-----------------+
+
+
++--------------------------------------------------------------------------------------------------------------------------+
+; Flow Elapsed Time                                                                                                        ;
++----------------------+--------------+-------------------------+---------------------+------------------------------------+
+; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
++----------------------+--------------+-------------------------+---------------------+------------------------------------+
+; Analysis & Synthesis ; 00:12:53     ; 1.0                     ; 1318 MB             ; 00:13:08                           ;
+; Total                ; 00:12:53     ; --                      ; --                  ; 00:13:08                           ;
++----------------------+--------------+-------------------------+---------------------+------------------------------------+
+
+
++------------------------------------------------------------------------------------+
+; Flow OS Summary                                                                    ;
++----------------------+------------------+------------+------------+----------------+
+; Module Name          ; Machine Hostname ; OS Name    ; OS Version ; Processor type ;
++----------------------+------------------+------------+------------+----------------+
+; Analysis & Synthesis ; klaptop          ; Arch Linux ; Arch Linux ; x86_64         ;
++----------------------+------------------+------------+------------+----------------+
+
+
+------------
+; Flow Log ;
+------------
+quartus_map --read_settings_files=on --write_settings_files=off FinalProject -c FinalProject
+
+
+

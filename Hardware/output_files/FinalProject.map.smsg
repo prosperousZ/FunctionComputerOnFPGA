@@ -1,0 +1,1 @@
+Warning (10268): Verilog HDL information at glyph_memory.v(17): always construct contains both blocking and non-blocking assignments File: /home/klemmon/Desktop/Fall2019/CS3710/Handin/Hardware/IO/display/glyph_memory.v Line: 17
