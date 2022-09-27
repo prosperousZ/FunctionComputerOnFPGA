@@ -1,0 +1,7 @@
+module io_interface(
+	input clk,rst,write_en
+	input [15:0] addr, wdata,
+	output [15:0] rdata
+);
+
+endmodule 

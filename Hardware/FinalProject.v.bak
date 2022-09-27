@@ -1,0 +1,7 @@
+module FinalProject(
+	input clk,rst,
+	output [7:0] vga_r, vga_g, vga_b
+	);
+	
+	
+endmodule 

@@ -1,0 +1,10 @@
+version=0.6.0
+typesetter=pdflatex
+steps=texpdf
+root=/home/klemmon/Desktop/Fall2019/CS3710/FinalProject/ProjectComponentDocTemplate.tex
+
+file=/home/klemmon/Desktop/Fall2019/CS3710/FinalProject/ProjectDocumentation.tex
+file=/home/klemmon/Desktop/Fall2019/CS3710/FinalProject/Application/ISAProgramRef.tex
+file=/home/klemmon/Desktop/Fall2019/CS3710/FinalProject/Application/FirmwareDesign.tex
+file=/home/klemmon/Desktop/Fall2019/CS3710/FinalProject/Application/Filesystem.tex
+file=/home/klemmon/Desktop/Fall2019/CS3710/FinalProject/IO/Documentation/display.tex

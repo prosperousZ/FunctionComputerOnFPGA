@@ -1,0 +1,62 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=0.6in]{geometry}
+
+\usepackage{subfiles}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{float}
+\floatstyle{boxed} 
+\restylefloat{figure}
+\usepackage{inconsolata}
+
+\graphicspath{{./}{./IO/display/}{../}}
+
+\usepackage{pdflscape}
+\usepackage{pgf}
+\usepackage{tikz}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows,automata}
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{4}
+\title{\textbf{Pixie Wranglers' Computer System Final Project Documentation}}
+\author{Kyle Lemmon, Yuntong Lu, Haoze Zhang}
+\date{}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Overview}
+Our project set out to build a functional computer, capable of three basic types of I/O, glyph based output to a VGA monitor, PS/2 keyboard input, and read and write access to a storage block with a basic filesystem on it. Many compromises in complexity had to be made in order to finish the project, and these are discussed in the sections below.
+
+The goal of the entire system is to be able to read and write files, and for every program that is run on the system to be loaded onto the device as a file. That is to say that every program on the computer comes from the same place, and that is somewhat maliable in the sense that it can be reprogrammed fairly easily.
+
+The design of the system allows for a wide range of possibilities, and with some further improvement and more software written for the device, it would be possible for the device to reprogram itself. If a hex-based text editor were written and included on the filesystem that was capable of reading, editing in hexadecimal, and writing back files to the file system storage, then this machine would be completely reprogrammable. Not only could new programs be created, but existing programs could be edited, including the kernel itself.
+
+
+\section{Application}
+\subfile{Application/FirmwareDesign}
+\subsection{Filesystem}
+\subfile{Application/Filesystem.tex}
+\subsection{Programming References}
+\subfile{Application/ISAProgramRef.tex}
+\section{IO}
+\subsection{VGA}
+\subfile{IO/Documentation/display.tex}
+\subsection{Keyboard}
+\subfile{IO/Documentation/keyboard.tex}
+\subsubsection{PS/2 Module}
+\subfile{IO/Documentation/ps2_fsm.tex}
+\subsection{SPI Module Interface}
+This interface did not make it into our final project, but is included in this documentation to document the work that was completed towards the SD card file interface goal.
+\subfile{IO/Documentation/spi_fsm.tex}
+\section{Processor}
+\subfile{Processor/procdocs.tex}
+\section{Assembler Usage}
+\subfile{Assembler/assemblerdocs.tex}
+\end{document}

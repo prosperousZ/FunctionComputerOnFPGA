@@ -1,0 +1,16 @@
+module tb_finalproject();
+
+reg clk,rst;
+
+wire [7:0] vga_r, vga_g, vga_b,
+
+initial begin
+	clk = 0;
+	rst = 0;
+end
+
+FinalProject proj(clk,rst,vga_r,cga_b,vga_b,vga_clk,vga_blank_n,hsync,vsync);
+
+always #10 clk=!clk;
+
+endmodule 
