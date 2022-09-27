@@ -1,0 +1,10 @@
+module glyph_memory(
+	input [12:0] read_addr_a,read_addr_b,write_addr,
+	input clk,rst,
+	input[15:0] write_data,
+	output [15:0] read_data_a,read_data_b
+);
+
+
+
+endmodule

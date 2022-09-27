@@ -1,0 +1,50 @@
+\documentclass[../../ProjectDocumentation.tex]{subfiles}
+
+\begin{document}
+
+\begin{tikzpicture}[->,>=stealth', shorten >=1pt, auto,
+    node distance=3.5cm,scale=0.6,
+    transform shape,baseline=-5cm,
+    state/.style={circle, draw, minimum size=1.75cm}, initial text = reset]
+  
+
+  \node[initial,state] (A)                    {$CONF$};
+  \node[state]         (B) [below of=A] {$IDLE$};
+  \node[state]         (C) [below of=B] {$SPRE$};
+  \node[state]         (D) [below of=C] {$SEND$};
+  \node[state]         (E) [below of=D] {$RPRE$};
+  \node[state]         (F) [below of=E] {$RECV$};
+
+
+  \path (A) edge              node {} (B)
+           
+        (B) edge              node {} (C)
+            edge [loop right] node {} (B)
+        (C) edge              node {} (D)
+            edge [loop right] node {} (C)
+        (D) edge              node {} (E)
+            edge [loop right] node {} (D)
+        (E) edge              node {} (F)
+            edge [loop right] node {} (E)
+        (F) edge [bend left]  node {} (B)
+            edge [loop right] node {} (F)
+        ;
+\end{tikzpicture}
+\begin{tabular}{|r|p{7cm}|}
+\hline
+\textbf{State} & \textbf{Descridption} \\
+\hline
+CONF & SPI configuration period, cycles clock for 74 cycles as per SD spec. \\
+\hline
+IDLE & Idle state, clock is held hi and slave select is also held hi. No data is transferred. When the send\_cmd line goes hi, the state is pushed to SPRE to begin the transmisson of the 48 bit command. \\
+\hline
+SPRE & Send precondition. Prepare for transmission of data by sending SS low and MOSI low.\\
+\hline
+SEND & Transmit data. During this state, the shift register is shifted for each clock cycle. The data is shifted on the falling edge of the sd clock, and the slave should read on the rising edge. Once the entire 48 bit command is sent, the SPI module moves to RPRE.\\
+\hline
+RPRE & Prepare for reception of data. Wait until MOSI goes low and reception transmission is started.\\
+\hline
+RECV & Receive data bit by bit. Shift reg is incremented on the clock cycle. A line goes high for one SPI clock cycle after the complete transmission of one byte. When the module controlling the SPI module determines that the reception is complete, a recv\_trans\_complete wire is sent hi.\\
+\hline
+\end{tabular}
+\end{document}

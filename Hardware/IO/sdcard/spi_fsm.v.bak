@@ -1,0 +1,7 @@
+module spi_fsm(
+	input clk,rst,send_en,
+	output cs,
+	output [5:0] bit_select
+	);
+	
+endmodule

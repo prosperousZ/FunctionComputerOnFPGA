@@ -1,0 +1,14 @@
+\documentclass[../../ProjectDocumentation.tex]{subfiles}
+%Gummi|065|=)
+\title{\textbf{Keyboard IO Documentation}}
+\author{Kyle Lemmon}
+\date{}
+\begin{document}
+
+\maketitle
+
+The keyboard interface is implemented as a simple memory map. There are 101 keys that we recongnize in our project, and as such, we have a memory block with 127 usable memory locations. This memory block is read only from the programmer's perspective, and is written to solely by the keyboard module. Every key is mapped to an address of this 127 block memory module, and when the key is pressed, the corresponding address has a 1 written to it. When any key is released, the corresponding address is reset to be 0. This way the processor can check if more than one key is pressed, and decide what to do. This is useful for keyboard shortcuts or using the shift key.
+
+The buttons that have an ASCII value are mapped to their ASCII values, and the ones that do not are mapped to the less commonly used, invisible ASCII characters. This allows a simple conversion to the character set glyphs and makes the programmer's job easier. For reference, the enter key is mapped to ASCII newline character, and the backspace key is mapped to its backspace ASCII key.
+
+\end{document}

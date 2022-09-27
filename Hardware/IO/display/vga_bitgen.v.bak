@@ -1,0 +1,32 @@
+module vga_bitgen(input bright,
+	input [2:0] L, R,
+	input [9:0] x,
+	input [8:0] y,
+	output[7:0] r,g,b);
+reg [1:0] drawRed;
+always @* begin
+	if(y > 200 && y < 280) begin
+		if(x > 50 && x < 60)
+		 drawRed = {L[2],1'b1};
+		else if(x > 110 && x < 120)
+		 drawRed = {L[1],1'b1};
+		else if(x > 230 && x < 240)
+		 drawRed = {L[0],1'b1};
+		else if(x > 400 && x < 410)
+		 drawRed = {R[0],1'b1};
+		else if(x > 520 && x < 530)
+		 drawRed = {R[1],1'b1};
+		else if(x > 580 && x < 590)
+		 drawRed = {R[2],1'b1};
+		else 
+		 drawRed = 0;
+	end
+	else
+		drawRed = 0;
+end
+	
+assign r = drawRed[0] ? ((drawRed[1] << 7) | (drawRed[1] << 6) | 8'h3f) : 8'h00;
+assign g = 8'h00;
+assign b = 8'h00;
+
+endmodule

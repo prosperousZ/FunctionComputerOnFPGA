@@ -1,0 +1,5 @@
+module io_fake_sdcard(
+	input clk,
+	input rst, we_proc,
+	input [15:0] addr_proc,wd_proc,rd_proc
+);

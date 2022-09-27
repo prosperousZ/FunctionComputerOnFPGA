@@ -1,0 +1,35 @@
+\documentclass[../../ProjectDocumentation.tex]{subfiles}
+
+\begin{document}
+\begin{tikzpicture}[->,>=stealth', shorten >=1pt, auto,
+    node distance=3.5cm, scale=0.6, 
+    transform shape, align=center, 
+    state/.style={circle, draw, minimum size=1.75cm}, initial text = reset]
+  
+
+  \node[initial,state] (A)                   {$IDLE$};
+  \node[state]         (B) [below left of=A] {$WAIT$};
+  \node[state]         (C) [below right of=B]{$DATA$};
+  \node[state]         (D) [below of=C] {$PARITY$};
+  \node[state]         (E) [below of=D]      {$STOP$};
+
+
+  \path
+        
+        (A) edge [bend right]  node {wait} (B)
+            edge [bend left]   node {start\_receiving\_data} (C)
+            edge [loop above ] node {} (A)
+           
+        (B) edge              node {!data\\ clk\_posedge} (C)
+            edge [loop left]  node {} (B)
+            edge [bend right] node {!wait} (A)
+        (C) edge              node {count = 0x7 \\clk\_posedge} (D)
+            edge [loop left] node {} (C)
+        (D) edge              node {clk\_posedge} (E)
+            edge [loop left] node {} (D)
+        (E) 
+            edge [loop left] node {} (E)
+            edge [bend right=75]  node {} (A)
+        ;
+\end{tikzpicture}
+\end{document}

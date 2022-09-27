@@ -1,0 +1,13 @@
+module vga(input clk,
+	input rst,
+	input [8:0] sw,
+	output vga_clk, vga_blank_n, hsync, vsync, 
+	output [7:0] r, g, b);
+wire bright;
+wire [9:0] x;
+wire [8:0] y;
+wire [2:0] L,R;
+vga_controller vcont(clk, rst, vga_clk, vga_blank_n, hsync, vsync, bright,x,y);
+tbird bird(sw[2],sw[0],sw[1],clk,rst,L,R);
+vga_bitgen bitgen(bright,L,R,x,y,r,g,b);
+endmodule
