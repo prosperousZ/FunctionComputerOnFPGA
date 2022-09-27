@@ -1,0 +1,13 @@
+
+State Machine - |FinalProject|io_interface:ioint|keyboard_memory:keyboard|current_state
+Name current_state.decode 
+current_state.idle 0 
+current_state.decode 1 
+
+State Machine - |FinalProject|io_interface:ioint|keyboard_memory:keyboard|ps2_in:keyboard|current_state
+Name current_state.receiving_parity current_state.receiving_data current_state.waiting current_state.idle current_state.receiving_stop 
+current_state.idle 0 0 0 0 0 
+current_state.waiting 0 0 1 1 0 
+current_state.receiving_data 0 1 0 1 0 
+current_state.receiving_parity 1 0 0 1 0 
+current_state.receiving_stop 0 0 0 1 1 
