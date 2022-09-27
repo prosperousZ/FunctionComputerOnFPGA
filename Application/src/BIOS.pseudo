@@ -1,0 +1,34 @@
+unsigned[] sdbuffer = load_sd_file_allocation_table_first_256_words();
+unsigned kernelSDBlock = 0;
+unsigned kernelLength = 0;
+//Loop through first 256 words (guaranteed to contain the first file)
+for(i = 0; i < 256; i++) {
+  if(sdbuffer[i] == 0x0000) {
+    kernelSDBlock = sdbuffer[i+1];
+    kernelLength = sdbuffer[i+2];
+    break;
+  }
+}
+if(kernelLength == 0x0000){
+  //Error must have occurred or no FAT entry for kernel
+  enter_error_state(); //undetermined behaviour at this point
+}
+
+void* kernelStart = 0;
+
+//Loop through entire kernel length in blocks of 256 bytes
+//the +256 to the kernel length ensures that the leftovers are copied.
+for(i = 0; i<kernelLength+256;i+=256){
+  //Set the kernel start offset to i, since we are copying kernel to
+  //start of memory
+  kernelStart = i;
+  //set the sdbuffer pointer to loaded 256 words from sd card
+  sdbuffer = load_sd_256w_data(kernelSDBlock*BLOCK_SIZE+i);
+  //loop through each word in 256 word block
+  for(j=i;j<i+256;j++){
+    //Copy word to kernel location
+    *(kernelStart+j) = sdbuffer[j];
+  }
+}
+
+jump_to_address(0);

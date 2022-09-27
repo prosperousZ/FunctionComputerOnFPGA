@@ -1,0 +1,47 @@
+\documentclass[../ProjectDocumentation.tex]{subfiles}
+%Gummi|065|=)
+\title{\textbf{Filesystem Documentation}}
+\author{Kyle Lemmon}
+\date{}
+\begin{document}
+
+\maketitle
+
+\subsection{File System}
+The file system allows for multiple files of different names and varying lengths, up to 8192 words. The design of the filesystem and the interface would allow for a maximum file size of 65536 words, however compilation of memory of this size was unfeasably long, so the decision was made to cap the file size at 8192.
+
+The file system consists of a file allocation table, which specifies the location of up to 16 other files (again, this could be larger, however the decision to limit this length was made to shorten compilation time). The file system is organized into blocks, with each block either allocated, in which case it contains a file that begins from the start of the block, or unallocated, and available to be written to. The table below shows the layout of these blocks, with the first block reserved for the file allocation table, where the names of the tiles and their respective block numbers.
+
+\begin{tikzpicture}
+
+\node[draw, minimum width=40mm, minimum height=7mm, label=above:{File no.}] (addr) {0};
+\node[draw, minimum width=80mm, minimum height=7mm, right=-\pgflinewidth of addr, label=above:Description] (desc) {File allocation table};
+
+\node[draw, minimum width=40mm, minimum height=7mm,below=-\pgflinewidth of addr] (addr) {1};
+\node[draw, minimum width=80mm, minimum height=7mm, right=-\pgflinewidth of addr] (desc) {File no. 1};
+
+\node[draw, minimum width=40mm, minimum height=7mm,below=-\pgflinewidth of addr] (addr) {\ldots};
+\node[draw, minimum width=80mm, minimum height=7mm, right=-\pgflinewidth of addr] (desc) {\ldots};
+
+\end{tikzpicture}
+
+
+\subsubsection{File Allocation Table}
+The file allocation table contains three values for every file: its name, its block number, and its length in words, which can be no more than 8192. The table below shows the structre of a single file system entry, where the addresses indicate a word address.
+
+\begin{tikzpicture}
+
+\node[draw, minimum width=40mm, minimum height=7mm, label=above:{Data Type}] (addr) {String};
+\node[draw, minimum width=80mm, minimum height=7mm, right=-\pgflinewidth of addr, label=above:Description] (desc) {File Name};
+
+\node[draw, minimum width=40mm, minimum height=7mm,below=-\pgflinewidth of addr] (addr) {Word};
+\node[draw, minimum width=80mm, minimum height=7mm, right=-\pgflinewidth of addr] (desc) {File Block Number};
+
+\node[draw, minimum width=40mm, minimum height=7mm,below=-\pgflinewidth of addr] (addr) {Word};
+\node[draw, minimum width=80mm, minimum height=7mm, right=-\pgflinewidth of addr] (desc) {File Size};
+
+\end{tikzpicture}
+
+
+
+\end{document}

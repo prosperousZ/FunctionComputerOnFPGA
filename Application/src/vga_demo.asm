@@ -1,0 +1,7 @@
+MOVI 1,r1
+MOVI 0x13,r2
+LUI 0xEB,r2
+.itm
+STOR r1,r2
+ADDI 1,r1
+BUC .itm
