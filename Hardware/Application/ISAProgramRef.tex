@@ -1,0 +1,61 @@
+\documentclass[../ProjectDocumentation.tex]{subfiles}
+\title{\textbf{ISA Documentation}}
+\author{Kyle Lemmon}
+\date{}
+\newcommand{\src}{R$_{src}$}
+\newcommand{\dst}{R$_{dest}$}
+\newcommand{\amt}{R$_{amount}$}
+\newcommand{\adr}{R$_{addr}$}
+\newcommand{\lnk}{R$_{link}$}
+\newcommand{\tgt}{R$_{target}$}
+\newcommand{\blk}{R$_{block}$}
+\newcommand{\off}{R$_{offset}$}
+\newcommand{\imm}{imm}
+\newcommand{\dsp}{disp}
+
+\begin{document}
+
+\begin{landscape}
+\begin{figure}
+\begin{tabular}{lllll}
+ADD 	& \src 	& \dst & \dst += \src &  	\\
+ADDI 	& \imm 	& \dst & \dst += \src &  	\\
+SUB 	& \src 	& \dst & \dst -= \src &  	\\
+SUBI 	& \imm 	& \dst & \dst -= \imm & 	\\
+CMP 	& \src 	& \dst & \dst $-$ \src & Sets comparison flags based on this op.	\\
+CMPI 	& \imm 	& \dst & \dst $-$ \imm & Same as CMP.	\\
+AND 	& \src 	& \dst & \dst \&= \src & Bitwise and.	\\
+ANDI 	& \imm 	& \dst & \dst \&= \imm & Bitwise and.	\\
+OR  	& \src 	& \dst & \dst $|$= \src & Bitwise or.	\\
+ORI 	& \imm 	& \dst & \dst $|$= \imm & Bitwise or.	\\
+XOR 	& \src 	& \dst & \dst \textasciicircum= \src & Bitwise xor.	\\
+XORI 	& \imm 	& \dst & \dst \textasciicircum= \imm & Bitwise XOR	\\
+MOV 	& \src 	& \dst & \dst = \src & Set dest equal to src	\\
+MOVI 	& \imm 	& \dst & \dst = \imm & Set dest equal to imm 	\\
+LSH 	& \amt 	& \dst & \dst $<<$ \amt & Amt can be $\pm15$	\\
+LSHI 	& \imm 	& \dst & \dst $<<$ \imm & imm can be $\pm15$	\\
+LUI 	& \imm 	& \dst & \dst = (\dst \& 0xff) $|$ (\imm $<<$ 8) & 	\\
+LOAD 	& \dst 	& \adr & \dst = mem[\adr] & 	\\
+STOR 	& \src 	& \adr & mem[\adr] = \dst & 	\\
+J[cond] & \tgt	& 		& jump\_if\_[cond](\tgt) &		\\
+B[cond] & \dsp 	&		& relative\_jump\_if\_[cond](\tgt) &		\\
+JAL		& \lnk	& \tgt	& jump\_link(\tgt) &		\\
+LDSD	& \blk	& \off	&  & Loads 256W from sd card at address (\blk*BS) + \off into map	\\
+STSD	& \blk 	& \off	&  & Stores 256W from mmap to addr (\blk*BS) + \off	\\
+\end{tabular}
+\caption{All available instructions on our finished processor.}
+\end{figure}
+\end{landscape}
+
+\subsection{Custom Instructions}
+Both the LDSD and STSD instructions perform a unique operation that moves a large amount of data. In the original design, these would load and store a 256 word block of data to and from the SD card, and this would take many clock cycles. In the current implementation, these only take one clock cycle, because we are using memory as though it were an sd card.
+
+The actual design of this module is a paging memory block. Only 256 words of memory are accessable at a time. The memory addresses are calculated in hardware based off of a block and and offset value. The block value addresses to any of 16 8192 word file blocks, and the offset addresses to any of 32 256 word page blocks. That is to say, that although there are $8192\cdot16=131072$ possible addresses in the file storage memory, only 256 consecutive words are available in memory at any single time.
+
+\subsubsection{LDSD}
+The load from SD instruction copies a particular page, \off, of a particular block, \blk, into the 256 word memory block indicated in Fig. \ref{fig:mmap} as the Storage memory region. Here the data can be read like any other memory, and can be written to like any other memory. LDSD always overwrites this area of memory, and changes made to it are not saved to the file storage memory, only changed in program memory.
+
+\subsubsection{STSD}
+The store to SD instruction copies the data in the 256 word memory block indicated in Fig. \ref{fig:mmap} as the SD memory region to the file storage in the block specified by \blk and the page specified by \off. All 256 words at this block and page in the file storage is overwritten every time with the complete contents of the Storage memory block.
+
+\end{document}
