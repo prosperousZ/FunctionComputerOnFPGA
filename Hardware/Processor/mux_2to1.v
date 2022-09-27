@@ -1,0 +1,17 @@
+//Author: prim: Yuntong Lu		Second: Haoze Zhang
+//*********************************************************
+ module mux_2to1(A, B, sel, Y);
+//*********************************************************
+
+ output [15:0] Y;
+ input [15:0] A, B;
+ input sel;
+ reg [15:0] Y;
+
+ always @(A or B or sel)
+ if (sel == 1'b0)
+	Y <= A;
+	else
+	Y <= B;
+
+ endmodule

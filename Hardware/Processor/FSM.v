@@ -1,0 +1,683 @@
+//Author: prim: Yuntong Lu		Second: Haoze Zhang
+
+module FSM(clk, reset, instr, regwrite, wa, aluop, we_a, immLo, 
+	 LD_mux_en_a, pc_en, ld_pc_en,pc_mux, ra1, ra2, flags_out, flag_en, wr_pc, ld_pc_disp);
+input clk, reset;
+input [15:0] instr;
+input [4:0] flags_out;
+
+output reg regwrite;
+output reg [3:0] wa, immLo, ra1, ra2;
+output reg [7:0] aluop, ld_pc_disp;
+output reg  we_a, LD_mux_en_a, pc_en, ld_pc_en,pc_mux, flag_en, wr_pc; 
+
+
+reg [3:0] state, next_state, cond, lop;
+reg [7:0] special_in, op;
+reg [15:0] inst;
+
+
+//parameter start = 4'b0010;
+parameter regToreg = 4'b0000;
+parameter immdi = 4'b0011;
+parameter regTomem = 4'b0100;
+parameter special = 4'b1000;
+
+
+// base line
+parameter ADD = 8'b00000101;
+parameter ADDU = 8'b00000110;
+parameter ADDC = 8'b00000111;
+parameter SUB = 8'b00001001;
+parameter CMP = 8'b00001011;
+parameter AND = 8'b00000001;
+parameter OR = 8'b00000010;
+parameter XOR = 8'b00000011;
+parameter MOV = 8'b00001101;
+
+parameter LOAD = 8'b01000000;
+parameter LOAD_1 = 8'b01000001;
+parameter LOAD_2 = 8'b01000010;
+parameter LOAD_3 = 8'b01000011;
+parameter STORE = 8'b01000100;
+parameter STORE_1 = 8'b01000101;
+parameter STORE_2 = 8'b01000110;
+parameter JCOND = 8'b01001100;
+parameter JCOND_1 = 8'b01001101;
+parameter JCOND_2 = 8'b01001110;
+parameter JAL = 8'b01001000;
+parameter JAL_1 = 8'b01001001;
+parameter JAL_2 = 8'b01001010;
+
+// addition 
+parameter ADDI = 4'b0101;
+parameter SUBI = 4'b1001;
+parameter CMPI = 4'b1011;
+parameter ORI = 4'b0010;
+parameter ANDI = 4'b0001;
+parameter MOVI = 4'b1101;
+parameter BCOND = 4'b1100;
+parameter BCOND_1 = 4'b1010;
+parameter BCOND_2 = 4'b1110; 
+parameter LUI = 4'b1111;
+
+// additional
+parameter LSH = 8'b10000100;
+parameter LSHL = 8'b10000000;
+parameter LSHR = 8'b10000001;
+parameter LDSD = 8'b10000101;
+parameter STSD = 8'b10000111;
+
+
+always@(posedge clk) begin
+	if (reset == 0) begin 
+		state <= 4'b0111;
+		//change <= 0;
+	end	
+	else begin 
+		state <= next_state;	
+		//change <= ~change;
+	end	
+end
+
+always@(negedge clk) begin 
+
+	case (state)
+		4'b0111:begin 
+			op = 8'b00000000;
+			lop = 4'b0000;
+			inst = 16'b0000000000000000;
+			regwrite = 0;   
+			//Cin = 0;
+			ld_pc_disp = 0;
+			flag_en = 0; 
+			wr_pc = 0;
+			wa = 4'b0000;
+			immLo = 4'b0000;
+			we_a = 0;
+			pc_en = 1;
+			ld_pc_en = 0;
+			pc_mux = 1;
+			ra1 = 4'b0000;
+			ra2 = 4'b0000;
+			aluop = 8'b00000000;
+			LD_mux_en_a = 0;  
+			inst = instr;
+			next_state = instr[15:12];
+			if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+					| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+				next_state = immdi;
+			special_in = {instr[15:12],instr[7:4]};	
+		end 
+	
+	
+	
+		regToreg:begin
+			op = {inst[15:12],inst[7:4]};
+			if (op == 8'b00001011) begin
+				regwrite = 0;
+			end else	begin
+				regwrite = 1;
+			end	
+			//Cin = 0; 
+			flag_en = 1; 
+			wr_pc = 0;
+			wa = inst[11:8];
+			immLo = 4'b0000;
+			ra1 = inst[11:8];
+			ra2 = inst[3:0];
+			aluop = {inst[15:12],inst[7:4]};
+			LD_mux_en_a = 0;  
+			we_a = 0;
+			pc_en = 1;
+			ld_pc_en = 0;
+			pc_mux = 1;	
+			inst = instr;
+			next_state = instr[15:12];
+			if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+					| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+				next_state = immdi;	
+			special_in = {instr[15:12],instr[7:4]};
+		end  
+	
+	
+	
+		immdi:begin
+			lop = inst[15:12];
+			if (lop == 4'b1011) begin 
+				regwrite = 0;
+			end else begin	
+				regwrite = 1;
+			end	
+			//regwrite = 1;
+			//Cin = 0;
+			flag_en = 1; 
+			wr_pc = 0;	
+			wa = inst[11:8];
+			immLo = inst[3:0];
+			ra1 = inst[11:8];
+			ra2 = inst[3:0];
+			aluop = {inst[15:12],inst[7:4]};
+			LD_mux_en_a = 0;  	
+			we_a = 0;
+			pc_en = 1;
+			ld_pc_en = 0;
+			pc_mux = 1;	
+			inst = instr;
+			next_state = instr[15:12];
+			if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+					| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+				next_state = immdi;
+			special_in = {instr[15:12],instr[7:4]};	
+		end
+		
+		regTomem: begin
+			case(special_in)
+				LOAD:begin
+					regwrite = 0;
+					//Cin = 0; 
+					flag_en = 0; 
+					wr_pc = 0;
+					wa = inst[11:8];
+					immLo = inst[3:0];
+					ra1 = inst[11:8];
+					ra2 = inst[3:0];
+					aluop = LOAD_2;
+					LD_mux_en_a = 0;  
+					we_a = 0;
+					pc_en = 0;
+					ld_pc_en = 0;
+					pc_mux = 0;	
+					//inst = instr;
+					next_state = regTomem;
+					special_in = 8'b01000001;
+				end
+				LOAD_1:begin
+					regwrite = 1;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;	
+					wa = inst[11:8];
+					immLo = inst[3:0];
+					ra1 = inst[11:8];
+					ra2 = inst[3:0];
+					//aluop = {instr[15:12],instr[7:4]};
+					LD_mux_en_a = 1;  	
+					we_a = 0;
+					pc_en = 0;
+					ld_pc_en = 0;
+					pc_mux = 0;	
+					
+					next_state = regTomem;
+					special_in = 8'b01000010;
+				end
+				
+				
+				LOAD_2:begin
+					regwrite = 0;
+					//Cin = 0; 
+					flag_en = 0; 
+					wr_pc = 0;
+					wa = inst[11:8];
+					immLo = inst[3:0];
+					ra1 = inst[11:8];
+					ra2 = inst[3:0];
+					//aluop = {instr[15:12],instr[7:4]};
+					LD_mux_en_a = 0;  
+					we_a = 0;
+					pc_en = 1;
+					ld_pc_en = 0;
+					pc_mux = 1;	
+					next_state = regTomem;
+					special_in = 8'b01000011;
+				end
+				
+				LOAD_3:begin
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;	
+					wa = inst[11:8];
+					immLo = inst[3:0];
+					ra1 = inst[11:8];
+					ra2 = inst[3:0];
+					//aluop = {instr[15:12],instr[7:4]};
+					LD_mux_en_a = 0;  	
+					we_a = 0;
+					pc_en = 1;
+					ld_pc_en = 0;
+					pc_mux = 1;	
+					inst = instr;
+					next_state = instr[15:12];
+					if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+						| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+					next_state = immdi;
+					special_in = {instr[15:12],instr[7:4]};
+				end
+				
+			
+				STORE: begin
+				//change = 1;
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;	
+					//inst = instr;
+					pc_mux = 0;
+					wa = inst[11:8];
+					immLo = inst[3:0];
+					ra1 = inst[11:8];
+					ra2 = inst[3:0];
+					//aluop = STORE_1;
+					LD_mux_en_a = 0;  
+					we_a = 1;
+					pc_en = 0;
+					ld_pc_en = 0;	
+					next_state = regTomem;
+					//if (counter == 0) begin
+						inst = instr;
+						special_in = 8'b01000101;
+						//counter = 1;
+						//end
+					//else	begin
+						//special_in = 8'b01000101;
+						//counter = 0;
+						//end
+				end
+				
+				
+				STORE_1: begin
+				
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;	
+					//inst = instr;
+					pc_mux = 0;
+					//wa = inst[11:8];
+					//immLo = inst[7:0];
+					//ra1 = inst[11:8];
+					//ra2 = inst[3:0];
+					//aluop = STORE_1;
+					LD_mux_en_a = 0;  	
+					we_a = 1;
+					pc_en = 0;
+					ld_pc_en = 0;	
+					next_state = regTomem;
+					//if (counter == 0) begin
+					//inst = instr;
+					special_in = 8'b01000110;
+				end
+				
+				
+				
+				
+				STORE_2:begin
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;	
+					wa = inst[11:8];
+					immLo = inst[3:0];
+					ra1 = inst[11:8];
+					ra2 = inst[3:0];
+					aluop = {inst[15:12],inst[7:4]};
+					LD_mux_en_a = 0;  	
+					we_a = 0;
+					pc_en = 0;
+					ld_pc_en = 0;
+					pc_mux = 1;	
+					//inst = instr;
+					next_state = inst[15:12];
+					if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+						| (next_state == CMPI) | (next_state == MOVI) | | (next_state == LUI))
+					next_state = immdi;		
+					special_in = {inst[15:12],inst[7:4]};
+				end
+				
+				
+				JCOND: begin  //clfzn
+					cond = inst[11:8];
+						if ((cond==4'b0000 & flags_out[3]==1) | (cond==4'b0001 & flags_out[3]==0) | (cond==4'b0010 & flags_out[0]==1)
+								| (cond==4'b0011 & flags_out[0]==0) | (cond==4'b0100 & flags_out[1]==1)
+								| (cond==4'b0101 & flags_out[1]==0) | (cond==4'b0110 & flags_out[4]==1)
+								| (cond==4'b0111 & flags_out[4]==0) | (cond==4'b1000 & flags_out[2]==1)
+								| (cond==4'b1001 & flags_out[2]==1) | (cond==4'b1110) | (cond==4'b1010 & flags_out[1]==0 & flags_out[3]==0)
+								| (cond==4'b1011 & flags_out[1]==1 & flags_out[3]==1) | (cond==4'b1100 & flags_out[3]==1 & flags_out[4]==0)
+								| (cond==4'b1101 & flags_out[3]==1 & flags_out[4]==1)) begin
+							regwrite = 0; 
+							flag_en = 0; 
+							ra2 = inst[3:0];
+							aluop = {inst[15:12],inst[7:4]};
+							LD_mux_en_a = 0;  	
+							we_a = 0;
+							pc_en = 1;
+							ld_pc_en = 0;
+							wr_pc = 1;
+							pc_mux = 1;	
+							//inst = instr;
+							next_state = regTomem;
+							special_in = 8'b01001101;												
+					end
+					
+				
+					else begin
+						regwrite = 0; 
+						flag_en = 0; 
+						wr_pc = 0;
+						cond = inst[11:8];
+						ra2 = inst[3:0];
+						aluop = {inst[15:12],inst[7:4]};
+						LD_mux_en_a = 0;  	
+						we_a = 0;
+						pc_en = 1;
+						ld_pc_en = 0;
+						pc_mux = 1;	
+						inst = instr;
+						next_state = instr[15:12];
+						if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+							| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+							next_state = immdi;	
+						special_in = {instr[15:12],instr[7:4]};
+					end
+					
+				end
+				
+				
+				JCOND_1: begin
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;
+					//wa = inst[11:8];
+					immLo = 4'b0000;
+					//ra1 = inst[11:8];
+					//ra2 = inst[3:0];
+					//aluop = {inst[15:12],inst[7:4]};
+					LD_mux_en_a = 0;  	
+					we_a = 0;
+					pc_en = 1;
+					ld_pc_en = 0;
+					pc_mux = 1;	
+					next_state = regTomem;
+					special_in = 8'b01001110;
+				
+				end
+				
+				JCOND_2: begin
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;
+					//wa = inst[11:8];
+					immLo = 4'b0000;
+					//ra1 = inst[11:8];
+					//ra2 = inst[3:0];
+					//aluop = {inst[15:12],inst[7:4]};
+					LD_mux_en_a = 0;  	
+					we_a = 0;
+					pc_en = 1;
+					ld_pc_en = 0;
+					pc_mux = 1;	
+					inst = instr;
+					next_state = instr[15:12];
+					if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+						| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+						next_state = immdi;	
+					special_in = {instr[15:12],instr[7:4]};
+				end
+					
+
+				JAL: begin
+					regwrite = 1; 
+					flag_en = 0; 
+					ra1 = inst[11:8];
+					ra2 = inst[3:0];
+					aluop = {inst[15:12],inst[7:4]};
+					LD_mux_en_a = 0;  	
+					we_a = 0;
+					pc_en = 1;//F?
+					wa = inst[11:8];
+					ld_pc_en = 0;
+					wr_pc = 1;
+					pc_mux = 1;	
+					//inst = instr;
+					next_state = regTomem;
+					special_in = 8'b01001001;
+				end
+				
+				JAL_1: begin
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 1;
+					//wa = inst[11:8];
+					immLo = 4'b0000;
+					//ra1 = inst[11:8];
+					//ra2 = inst[3:0];
+					//aluop = {inst[15:12],inst[7:4]};
+					LD_mux_en_a = 0;  	
+					we_a = 0;
+					pc_en = 1;
+					ld_pc_en = 0;
+					pc_mux = 1;	
+					next_state = regTomem;
+					special_in = 8'b01001010;
+				end
+				
+				
+				JAL_2: begin
+					regwrite = 0;
+					//Cin = 0;
+					flag_en = 0; 
+					wr_pc = 0;
+					//wa = inst[11:8];
+					immLo = 4'b0000;
+					//ra1 = inst[11:8];
+					//ra2 = inst[3:0];
+					//aluop = {inst[15:12],inst[7:4]};
+					LD_mux_en_a = 0;  	
+					we_a = 0;
+					pc_en = 1;
+					ld_pc_en = 0;
+					pc_mux = 1;	
+					inst = instr;
+					next_state = instr[15:12];
+					if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+						| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+						next_state = immdi;	
+					special_in = {instr[15:12],instr[7:4]};
+				end
+
+					
+			endcase
+		end
+		
+		BCOND: begin
+			cond = inst[11:8];
+			if ((cond==4'b0000 & flags_out[3]==1) | (cond==4'b0001 & flags_out[3]==0) | (cond==4'b0010 & flags_out[0]==1)
+								| (cond==4'b0011 & flags_out[0]==0) | (cond==4'b0100 & flags_out[1]==1)
+								| (cond==4'b0101 & flags_out[1]==0) | (cond==4'b0110 & flags_out[4]==1)
+								| (cond==4'b0111 & flags_out[4]==0) | (cond==4'b1000 & flags_out[2]==1)
+								| (cond==4'b1001 & flags_out[2]==1) | (cond==4'b1110) | (cond==4'b1010 & flags_out[1]==0 & flags_out[3]==0)
+								| (cond==4'b1011 & flags_out[1]==1 & flags_out[3]==1) | (cond==4'b1100 & flags_out[3]==1 & flags_out[4]==0)
+								| (cond==4'b1101 & flags_out[3]==1 & flags_out[4]==1)) begin
+				regwrite = 0; 
+				flag_en = 0; 
+				//ra2 = inst[3:0];
+				aluop = {inst[15:12],inst[7:4]};
+				ld_pc_disp = inst[7:0];
+				LD_mux_en_a = 0;  	
+				we_a = 0;
+				pc_en = 1;
+				ld_pc_en = 1;
+				wr_pc = 0;
+				pc_mux = 1;	
+				//inst = instr;
+				next_state = BCOND_1;	
+			end
+		 
+			else begin
+				regwrite = 0; 
+				flag_en = 0; 
+				wr_pc = 0;
+				cond = inst[11:8];
+				ra2 = inst[3:0];
+				aluop = {inst[15:12],inst[7:4]};
+				LD_mux_en_a = 0;  	
+				we_a = 0;
+				pc_en = 1;
+				ld_pc_en = 0;
+				pc_mux = 1;	
+				inst = instr;
+				next_state = instr[15:12];
+				if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+					| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+					next_state = immdi;	
+				special_in = {instr[15:12],instr[7:4]};
+			end	
+		end
+		
+		BCOND_1: begin
+			regwrite = 0;
+			//Cin = 0;
+			flag_en = 0; 
+			wr_pc = 0;
+			//wa = inst[11:8];
+			immLo = 4'b0000;
+			//ra1 = inst[11:8];
+			//ra2 = inst[3:0];
+			//aluop = {inst[15:12],inst[7:4]};
+			LD_mux_en_a = 0;  	
+			we_a = 0;
+			pc_en = 1;
+			ld_pc_en = 0;
+			pc_mux = 1;	
+			//inst = instr;
+			next_state = BCOND_2;
+		end
+		
+		
+		BCOND_2: begin
+			regwrite = 0;
+			//Cin = 0;
+			flag_en = 0; 
+			wr_pc = 0;
+			//wa = inst[11:8];
+			immLo = 4'b0000;
+			//ra1 = inst[11:8];
+			//ra2 = inst[3:0];
+			//aluop = {inst[15:12],inst[7:4]};
+			LD_mux_en_a = 0;  	
+			we_a = 0;
+			pc_en = 1;
+			ld_pc_en = 0;
+			pc_mux = 1;	
+			inst = instr;
+			next_state = instr[15:12];
+			if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+				| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+				next_state = immdi;	
+			special_in = {instr[15:12],instr[7:4]};
+		end
+		
+		
+		special: begin
+		case(special_in)
+			LSH: begin
+				regwrite = 1;	
+				//Cin = 0; 
+				flag_en = 0; 
+				wr_pc = 0;
+				wa = inst[11:8];
+				immLo = 4'b0000;
+				ra1 = inst[11:8];
+				ra2 = inst[3:0];
+				aluop = {inst[15:12],inst[7:4]};
+				LD_mux_en_a = 0;  
+				we_a = 0;
+				pc_en = 1;
+				ld_pc_en = 0;
+				pc_mux = 1;	
+				inst = instr;
+				next_state = instr[15:12];
+				if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+					| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+					next_state = immdi;	
+				special_in = {instr[15:12],instr[7:4]};
+			end
+			
+			LSHL: begin
+				regwrite = 1;
+				//Cin = 0;
+				flag_en = 0; 
+				wr_pc = 0;	
+				wa = inst[11:8];
+				immLo = inst[3:0];
+				ra1 = inst[11:8];
+				//ra2 = inst[3:0];
+				aluop = {inst[15:12],inst[7:4]};
+				LD_mux_en_a = 0;  	
+				we_a = 0;
+				pc_en = 1;
+				ld_pc_en = 0;
+				pc_mux = 1;	
+				inst = instr;
+				next_state = instr[15:12];
+				if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+					| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+				next_state = immdi;
+				special_in = {instr[15:12],instr[7:4]};				
+			end
+			
+			
+			LSHR: begin
+				regwrite = 1;
+				//Cin = 0;
+				flag_en = 0; 
+				wr_pc = 0;	
+				wa = inst[11:8];
+				immLo = inst[3:0];
+				ra1 = inst[11:8];
+				//ra2 = inst[3:0];
+				aluop = {inst[15:12],inst[7:4]};
+				LD_mux_en_a = 0;  	
+				we_a = 0;
+				pc_en = 1;
+				ld_pc_en = 0;
+				pc_mux = 1;	
+				inst = instr;
+				next_state = instr[15:12];
+				if ((next_state == ADDI) | (next_state == SUBI)| (next_state == ORI) | (next_state == ANDI)
+					| (next_state == CMPI) | (next_state == MOVI) | (next_state == LUI))
+				next_state = immdi;
+				special_in = {instr[15:12],instr[7:4]};	
+			end
+		
+		default: ;/////////////////////////
+		endcase
+		end
+		
+		default: begin 
+			inst = 16'b0000000000000000;
+			regwrite = 0;   
+			//Cin = 0;
+			wa = 4'b0000;
+			immLo = 4'b0000;
+			we_a = 0;
+			pc_en = 1;
+			ld_pc_en = 0;
+			pc_mux = 1;
+			ra1 = 4'b0000;
+			ra2 = 4'b0000;
+			aluop = 8'b00000000;
+			LD_mux_en_a = 0;  
+		end 
+	
+	endcase
+
+end
+
+
+
+endmodule 

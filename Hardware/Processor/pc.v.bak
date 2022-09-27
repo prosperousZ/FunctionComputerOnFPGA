@@ -1,0 +1,23 @@
+module pc(input clk,
+    input reset,
+    input pc_en,
+	 input [15:0] ld_pc,
+	 input ld_pc_en, 
+    output reg [15:0] pc);
+
+always@(posedge clk)begin
+        if(reset)
+            begin
+				pc <= 0;
+            end
+        else begin 
+				if(pc_en)begin
+					if(ld_pc_en)begin
+						pc <= pc + ld_pc;
+					end else begin
+						pc <= pc + 16'b0000_0000_0000_0001;
+					end
+				end 
+			end
+end 
+endmodule
