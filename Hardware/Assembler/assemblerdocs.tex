@@ -1,0 +1,16 @@
+\documentclass[../ProjectDocumentation.tex]{subfiles}
+%Gummi|065|=)
+\title{\textbf{Assembler Documentation}}
+\author{Kyle Lemmon}
+\date{}
+\begin{document}
+
+\maketitle
+
+The assembler runs in two passes, the first pass gathers the location of all of the labels, and the second pass converts the assembly into binary strings. Pseudoinstructions, or instructions that decompose into more than one instruction in machine code are decomposed at this step. The first pass accounts for the decomposition of these pseudoinstructions by adding the appropriate offset to the index of each label when it detects a pseudoinstruction.
+
+In order to run the assembler, only two arguments are needed, the first specifies the input assembly file, and the second specifies the output file. See the provided makefile for examples of how this should work.
+
+There is also a provided python script called fixmem.py that will convert the binary strings into hexadecimal strings, and pad with the appropriate number of zeros.
+
+\end{document}
